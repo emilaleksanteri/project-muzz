@@ -13,11 +13,11 @@
 }
 
 :root {
-  @apply flex  flex-col items-center justify-center bg-neutral-50;
+  @apply flex items-center justify-center bg-gray-200;
 }
 
 body {
-  @apply w-full max-w-md;
+  @apply w-full max-w-md bg-neutral-50;
 }
 
 .bottom-shadow {
