@@ -6,6 +6,98 @@ enum ScreenView {
   Profile,
 }
 
+function MatchDate(props: { formatDate: Date }) {
+  const { formatDate } = props;
+  const month = formatDate.toLocaleString("default", { month: "long" });
+  const date = formatDate.getDate();
+  const year = formatDate.getFullYear();
+  const time = formatDate
+    .toLocaleTimeString("en-US", { timeStyle: "short", hour12: true })
+    .split(":")
+    .slice(0, 2)
+    .join(":");
+
+  return (
+    <span className="py-3 text-xs text-slate-400">
+      <strong>
+        {month} {date}, {year}
+      </strong>{" "}
+      {time}
+    </span>
+  );
+}
+
+function MatchText(props: { matchedOn: Date }) {
+  return (
+    <li className="w- full flex flex-col items-center justify-center">
+      <MatchDate formatDate={props.matchedOn} />
+      <p className="pb-4 font-serif text-2xl font-bold text-slate-700">
+        You matched 🎈
+      </p>
+    </li>
+  );
+}
+
+type Message = {
+  message: string;
+  id: number;
+  user: { id: number };
+  sentAt: Date;
+};
+
+type Match = {
+  id: number;
+  name: string;
+  matched: Date;
+};
+
+function MatchTextBubble(props: { message: Message }) {
+  const { message } = props.message;
+
+  return (
+    <li className="flex w-full items-center justify-start">
+      <div className="leading-1.5 flex w-full max-w-[320px] flex-col gap-2.5 rounded-r-2xl rounded-tl-2xl  bg-[#e7e9f0] p-3 text-slate-600">
+        <p>{message}</p>
+      </div>
+    </li>
+  );
+}
+
+function SenderTextBubble(props: { message: Message }) {
+  const { message } = props.message;
+
+  return (
+    <li className="flex w-full items-center justify-end">
+      <div className="leading-1.5 flex w-full max-w-[320px] flex-col gap-2.5 rounded-l-2xl rounded-tr-2xl  bg-[#dd5170] p-3 text-neutral-50">
+        <p>{message}</p>
+      </div>
+    </li>
+  );
+}
+
+type User = {
+  id: number;
+};
+
+function MessagesList(props: {
+  messages: Message[];
+  match: Match;
+  user: User;
+}) {
+  return (
+    <ul className="flex w-full flex-col gap-4 px-4 py-2">
+      <MatchText matchedOn={props.match.matched} />
+      {props.messages.map((msg) =>
+        msg.user.id !== props.user.id ? (
+          <MatchTextBubble message={msg} key={msg.id} />
+        ) : (
+          <SenderTextBubble message={msg} key={msg.id} />
+        ),
+      )}
+    </ul>
+  );
+}
+
 function App() {
   const [screenView, setScreenView] = useState<ScreenView>(ScreenView.Chat);
   const data = {
@@ -37,6 +129,7 @@ function App() {
         user: { id: 1 },
         id: 3,
       },
+      /**
       {
         message: "Hey! Did you also go to Oxford?",
         sentAt: new Date(),
@@ -92,6 +185,7 @@ function App() {
         user: { id: 1 },
         id: 12,
       },
+      */
     ],
   };
 
@@ -148,47 +242,14 @@ function App() {
       </nav>
       {screenView === ScreenView.Chat ? (
         <div className="flex h-[88%] w-full flex-col items-center justify-center bg-neutral-50">
-          <div className="flex h-[89%] w-full flex-col justify-end gap-4 overflow-auto ">
-            <ul className="flex h-full w-full flex-col gap-4 px-4">
-              <li>
-                <p className="flex w-full items-center justify-center gap-1 text-center font-semibold">
-                  matched on
-                  <span>
-                    {data.match.matched.toDateString().split(" ")[1]}{" "}
-                    {data.match.matched.getDate()},{" "}
-                    {data.match.matched.getFullYear()}{" "}
-                    {data.match.matched
-                      .toLocaleTimeString()
-                      .split(":")
-                      .slice(0, 2)
-                      .join(":")}
-                  </span>
-                </p>
-              </li>
-              {data.messages.map((msg) =>
-                msg.user.id !== data.user.id ? (
-                  <li
-                    key={msg.id}
-                    className="flex w-full items-center justify-start"
-                  >
-                    <div className="leading-1.5 flex w-full max-w-[320px] flex-col gap-2.5 rounded-r-2xl rounded-tl-2xl  bg-[#e7e9f0] p-3 text-slate-600">
-                      <p> {msg.message}</p>
-                    </div>
-                  </li>
-                ) : (
-                  <li
-                    key={msg.id}
-                    className="flex w-full items-center justify-end"
-                  >
-                    <div className="leading-1.5 flex w-full max-w-[320px] flex-col gap-2.5 rounded-l-2xl rounded-tr-2xl  bg-[#dd5170] p-3 text-neutral-50">
-                      <p> {msg.message}</p>
-                    </div>
-                  </li>
-                ),
-              )}
-            </ul>
+          <div className="flex h-[89%] w-full flex-col justify-end gap-4 overflow-auto shadow-inner">
+            <MessagesList
+              messages={data.messages}
+              match={data.match}
+              user={data.user}
+            />
           </div>
-          <div className="flex h-[10%] w-full items-center justify-center px-4 py-4">
+          <div className="flex h-[10%] w-full items-center justify-center border-t-[1.8px] border-slate-200 px-4 py-4">
             <form className="flex w-full items-center justify-center">
               <input
                 placeholder={`Message ${data.match.name}`}
