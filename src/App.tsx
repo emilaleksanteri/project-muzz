@@ -149,6 +149,7 @@ function Message(props: {
 
 type User = {
   id: number;
+  name: string;
 };
 
 function MessagesList(props: {
@@ -193,16 +194,47 @@ function MessagesList(props: {
   );
 }
 
-function SendMessage(props: { matchName: string }) {
+type SendMessageProps = {
+  matchName: string;
+  setMessages: React.Dispatch<React.SetStateAction<any>>; //change type plz
+  data: Data;
+  user: User;
+};
+
+function SendMessage(props: SendMessageProps) {
+  const [message, setMessage] = useState<string>("");
+  const { matchName, setMessages, data, user } = props;
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setMessages({
+      ...data,
+      messages: [
+        ...data.messages,
+        {
+          message: message,
+          sentAt: new Date(),
+          user: user,
+          id: data.messages.length + 1,
+        },
+      ],
+    });
+  };
+
   return (
     <div className="absolute bottom-0 flex h-[10%] w-full items-center justify-center bg-white/30   px-4 py-4 backdrop-blur-xl">
-      <form className="flex w-full items-center justify-center">
-        <input
-          placeholder={`Message ${props.matchName}`}
-          className="w-full rounded-full border-[1.5px] border-slate-300 px-3 py-2"
+      <form
+        className="flex w-full items-center justify-center"
+        onSubmit={onSubmit}
+      >
+        <textarea
+        onChange={(e) => setMessage(e.target.value)}
+          placeholder={`Message ${matchName}`}
+          className="w-full rounded-full border-[1.5px] border-slate-300 px-3 py-2 focus:outline-none"
         />
       </form>
-    </div>
+    </div >
+
   );
 }
 
@@ -224,16 +256,16 @@ function Tab(props: TabProps) {
 
   const tabClass = (tab: ScreenView, currView: ScreenView) => {
     if (tab === currView) {
-      return "border-b-[3px] border-[#dd5170] font-semibold  text-[#dd5170] w-full";
+      return "border-[#dd5170] font-semibold  text-[#dd5170]";
     } else {
-      return "border-b-[3px] font-medium text-slate-400 w-full ";
+      return "font-medium text-slate-400";
     }
   };
 
   return (
     <li className="w-full text-center">
       <button
-        className={tabClass(tabType, screenView)}
+        className={`w-full border-b-[3px] ${tabClass(tabType, screenView)}`}
         onClick={() => setScreenView(tabType)}
       >
         <p className="py-1">{children}</p>
@@ -292,9 +324,15 @@ function MessageViewNav(props: MessageViewNavProps) {
   );
 }
 
+type Data = {
+  match: Match;
+  user: User;
+  messages: Message[];
+};
+
 function App() {
   const [screenView, setScreenView] = useState<ScreenView>(ScreenView.Chat);
-  const [data, _setData] = useState({
+  const [data, _setData] = useState<Data>({
     match: {
       id: 1,
       name: "Alisha",
