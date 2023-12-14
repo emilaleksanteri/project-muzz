@@ -20,6 +20,6 @@ body {
   @apply w-full max-w-md bg-neutral-50;
 }
 
-.bottom-shadow {
-  box-shadow: 0 5px 2px -2px rgba(0, 0, 0, 0.1);
+.scroll::-webkit-scrollbar {
+  display: none;
 }

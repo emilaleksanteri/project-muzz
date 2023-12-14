@@ -1,5 +1,12 @@
-import { ChevronLeft, MoreHorizontal, CheckCheck } from "lucide-react";
-import { useState } from "react";
+import {
+  ChevronLeft,
+  MoreHorizontal,
+  CheckCheck,
+  SendHorizontal,
+} from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import type { Message, Match, User } from "./lib/types";
+import { useMessages } from "./lib/store";
 
 enum ScreenView {
   Chat,
@@ -37,19 +44,6 @@ function MatchText(props: { matchedOn: Date }) {
     </li>
   );
 }
-
-type Message = {
-  message: string;
-  id: number;
-  user: { id: number };
-  sentAt: Date;
-};
-
-type Match = {
-  id: number;
-  name: string;
-  matched: Date;
-};
 
 function MatchTextBubble(props: {
   message: Message;
@@ -147,16 +141,14 @@ function Message(props: {
   );
 }
 
-type User = {
-  id: number;
-  name: string;
-};
+function MessagesList(props: { match: Match; user: User }) {
+  const { messages } = useMessages();
+  const bottomRef = useRef<HTMLDivElement>(null);
 
-function MessagesList(props: {
-  messages: Message[];
-  match: Match;
-  user: User;
-}) {
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages]);
+
   function isHourBetweenMessages(
     message1: Message,
     message2: Message,
@@ -169,72 +161,92 @@ function MessagesList(props: {
   function isUserMessageBurst(message1: Message, message2: Message): boolean {
     return (
       message1.user.id === message2.user.id &&
-      message1.sentAt.getTime() - message2.sentAt.getTime() <= 1000 * 60 * 20
+      message1.sentAt.getTime() - message2.sentAt.getTime() <= 1000 * 20
     );
   }
 
   return (
     <ul className="flex w-full flex-col gap-4 px-4 py-2">
       <MatchText matchedOn={props.match.matched} />
-      {props.messages.map((msg, i) => (
+      {messages.map((msg, i) => (
         <Message
+          key={msg.id}
           msg={msg}
           i={i}
           hourBetweenMessages={
-            i !== 0 && isHourBetweenMessages(msg, props.messages[i - 1])
+            i !== 0 && isHourBetweenMessages(msg, messages[i - 1])
           }
-          userMessageBurst={
-            i !== 0 && isUserMessageBurst(msg, props.messages[i - 1])
-          }
-          isLatest={i === props.messages.length - 1}
+          userMessageBurst={i !== 0 && isUserMessageBurst(msg, messages[i - 1])}
+          isLatest={i === messages.length - 1}
           user={props.user}
         />
       ))}
+      <div ref={bottomRef} />
     </ul>
   );
 }
 
 type SendMessageProps = {
   matchName: string;
-  setMessages: React.Dispatch<React.SetStateAction<any>>; //change type plz
-  data: Data;
   user: User;
 };
 
 function SendMessage(props: SendMessageProps) {
   const [message, setMessage] = useState<string>("");
-  const { matchName, setMessages, data, user } = props;
+  const { matchName, user } = props;
+  const { addMessage } = useMessages();
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  const resizeTextArea = () => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = "auto";
+      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+    }
+  };
+
+  useEffect(() => {
+    resizeTextArea();
+  }, [message]);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setMessages({
-      ...data,
-      messages: [
-        ...data.messages,
-        {
-          message: message,
-          sentAt: new Date(),
-          user: user,
-          id: data.messages.length + 1,
-        },
-      ],
+    addMessage({
+      id: Math.floor(Math.random() * 100_000_000),
+      message: message,
+      sentAt: new Date(),
+      user: user,
     });
+    setMessage("");
   };
 
   return (
-    <div className="absolute bottom-0 flex h-[10%] w-full items-center justify-center bg-white/30   px-4 py-4 backdrop-blur-xl">
+    <div className="absolute bottom-0 flex h-fit w-full items-center justify-center bg-white/30   px-4 py-4 backdrop-blur-xl">
       <form
-        className="flex w-full items-center justify-center"
+        className="flex h-fit w-full items-center justify-center gap-2"
         onSubmit={onSubmit}
       >
         <textarea
-        onChange={(e) => setMessage(e.target.value)}
+          ref={textAreaRef}
+          value={message}
+          rows={1}
+          id="text"
+          autoFocus
+          onChange={(e) => setMessage(e.target.value)}
           placeholder={`Message ${matchName}`}
-          className="w-full rounded-full border-[1.5px] border-slate-300 px-3 py-2 focus:outline-none"
+          className={`scroll w-full ${
+            message.length === 0 ? "rounded-full" : "rounded-lg"
+          } resize-none overflow-auto border-[1.5px] border-slate-300 p-4 px-3 py-2 outline-none focus:outline-none`}
         />
+        <button
+          type="submit"
+          className={`${
+            message.length === 0 ? "hidden" : "block"
+          } flex items-center justify-center self-end rounded-lg bg-[#dd5170] p-2 px-3`}
+        >
+          <SendHorizontal width={22} height={22} className="stroke-white " />
+        </button>
       </form>
-    </div >
-
+    </div>
   );
 }
 
@@ -263,14 +275,14 @@ function Tab(props: TabProps) {
   };
 
   return (
-    <li className="w-full text-center">
+    <div className="w-full text-center">
       <button
         className={`w-full border-b-[3px] ${tabClass(tabType, screenView)}`}
         onClick={() => setScreenView(tabType)}
       >
         <p className="py-1">{children}</p>
       </button>
-    </li>
+    </div>
   );
 }
 
@@ -324,105 +336,23 @@ function MessageViewNav(props: MessageViewNavProps) {
   );
 }
 
-type Data = {
-  match: Match;
-  user: User;
-  messages: Message[];
-};
-
 function App() {
   const [screenView, setScreenView] = useState<ScreenView>(ScreenView.Chat);
-  const [data, _setData] = useState<Data>({
-    match: {
-      id: 1,
-      name: "Alisha",
-      matched: new Date(),
-    },
-    user: {
-      id: 2,
-      name: "User",
-    },
-    messages: [
-      {
-        message: "Hey! Did you also go to Oxford?",
-        sentAt: new Date("2023-12-13T15:20:36.461Z"),
-        user: { id: 1 },
-        id: 1,
-      },
-      {
-        message: "Yes! Are you going to the food festival on Sunday?",
-        sentAt: new Date("2023-12-13T15:23:36.461Z"),
-        user: { id: 2 },
-        id: 2,
-      },
-      {
-        message: "I am! See you there for a coffee?",
-        sentAt: new Date("2023-12-13T15:25:36.461Z"),
-        user: { id: 1 },
-        id: 3,
-      },
-      {
-        message: "Hey! Did you also go to Oxford?",
-        sentAt: new Date("2023-12-13T15:25:40.461Z"),
-        user: { id: 1 },
-        id: 4,
-      },
-      {
-        message: "Yes! Are you going to the food festival on Sunday?",
-        sentAt: new Date("2023-12-13T15:26:45.461Z"),
-        user: { id: 2 },
-        id: 5,
-      },
-      {
-        message: "I am! See you there for a coffee?",
-        sentAt: new Date("2023-12-13T15:28:00.461Z"),
-        user: { id: 1 },
-        id: 6,
-      },
-      {
-        message: "Hey! Did you also go to Oxford?",
-        sentAt: new Date("2023-12-13T15:28:10.461Z"),
-        user: { id: 1 },
-        id: 7,
-      },
-      {
-        message: "Yes! Are you going to the food festival on Sunday?",
-        sentAt: new Date("2023-12-13T15:29:20.461Z"),
-        user: { id: 2 },
-        id: 8,
-      },
-      {
-        message: "I am! See you there for a coffee?",
-        sentAt: new Date("2023-12-13T16:30:20.461Z"),
-        user: { id: 1 },
-        id: 9,
-      },
+  const match: Match = {
+    id: 1,
+    name: "Alisha",
+    matched: new Date("2023-12-13T12:20:36.461Z"),
+  };
 
-      {
-        message: "Hey! Did you also go to Oxford?",
-        sentAt: new Date("2023-12-13T16:32:20.461Z"),
-        user: { id: 1 },
-        id: 10,
-      },
-      {
-        message: "Yes! Are you going to the food festival on Sunday?",
-        sentAt: new Date("2023-12-13T16:32:45.461Z"),
-        user: { id: 2 },
-        id: 11,
-      },
-      {
-        message: "I am! See you there for a coffee?",
-        sentAt: new Date("2023-12-13T18:32:45.461Z"),
-        user: { id: 1 },
-        id: 12,
-      },
-    ],
-  });
+  const user: User = {
+    id: 2,
+    name: "User",
+  };
 
   return (
     <main className="flex h-screen flex-col items-center justify-center bg-neutral-50">
       <MessageViewNav
-        match={data.match}
+        match={match}
         screenView={screenView}
         setScreenView={setScreenView}
       />
@@ -430,13 +360,9 @@ function App() {
         <div className="relative flex h-full w-full flex-col items-center justify-center ">
           <div className="absolute top-0 flex h-full w-full flex-col items-center justify-end bg-neutral-50">
             <div className="flex h-full w-full flex-col  gap-4 overflow-auto">
-              <MessagesList
-                messages={data.messages}
-                match={data.match}
-                user={data.user}
-              />
+              <MessagesList match={match} user={user} />
             </div>
-            <SendMessage matchName={data.match.name} />
+            <SendMessage matchName={match.name} user={user} />
           </div>
         </div>
       ) : (
