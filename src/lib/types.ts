@@ -8,10 +8,17 @@ export type Message = {
 export type User = {
   id: number;
   name: string;
+  image: string;
 };
 
 export type Match = {
   id: number;
   name: string;
   matched: Date;
+  image: string;
 };
+
+export enum ScreenView {
+  Chat,
+  Profile,
+}

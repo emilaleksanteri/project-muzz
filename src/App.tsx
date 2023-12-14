@@ -5,13 +5,9 @@ import {
   SendHorizontal,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import type { Message, Match, User } from "./lib/types";
+import { type Message, type Match, type User, ScreenView } from "./lib/types";
 import { useMessages } from "./lib/store";
-
-enum ScreenView {
-  Chat,
-  Profile,
-}
+import { Link } from "@tanstack/react-router";
 
 function MessageListDate(props: { formatDate: Date }) {
   const { formatDate } = props;
@@ -293,13 +289,18 @@ function MessageViewNav(props: MessageViewNavProps) {
     <nav className="h-fit w-full bg-neutral-50 ">
       <ul className="flex items-center justify-between px-2 py-3">
         <li>
-          <a className="-ml-1 flex w-fit items-center justify-center">
+          <Link className="-ml-1 flex w-fit items-center justify-center" to="/">
             <ChevronLeft size={40} className="stroke-[#c4c9cf]" />
-          </a>
+          </Link>
         </li>
         <li>
           <div className="flex items-center justify-center gap-2 font-semibold text-slate-700">
-            <img className="h-8 w-8 rounded-full bg-slate-300" />
+            <div className="h-10 w-10 rounded-full border-[1.2px]">
+              <img
+                className="h-10 w-10 rounded-full bg-slate-300 object-cover"
+                src={props.match.image}
+              />
+            </div>
             <p>{match.name}</p>
           </div>
         </li>
@@ -336,17 +337,21 @@ function MessageViewNav(props: MessageViewNavProps) {
   );
 }
 
-function App() {
+export function Chat() {
   const [screenView, setScreenView] = useState<ScreenView>(ScreenView.Chat);
   const match: Match = {
     id: 1,
     name: "Alisha",
     matched: new Date("2023-12-13T12:20:36.461Z"),
+    image:
+      "https://res.cloudinary.com/duqbyobol/image/upload/v1702589450/amir-riazipour-XcZ78DlXtes-unsplash_kcke73.jpg",
   };
 
   const user: User = {
     id: 2,
     name: "User",
+    image:
+      "https://res.cloudinary.com/duqbyobol/image/upload/v1702589457/muhammad-ruqi-yaddin-hxLv1jqP0_o-unsplash_r7vqb6.jpg",
   };
 
   return (
@@ -374,4 +379,11 @@ function App() {
   );
 }
 
-export default App;
+export function App() {
+  return (
+    <main>
+      <p>Root</p>
+      <Link to="chat">Chat</Link>
+    </main>
+  );
+}
