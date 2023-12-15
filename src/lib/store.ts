@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Message } from "./types";
+import type { Match, Message, User } from "./types";
 
 const messages = [
   {
@@ -81,14 +81,106 @@ export interface IMessages {
   messages: Message[];
 }
 
-export interface IMessagesActions {
-  addMessage: (message: Message) => void;
+export interface IChat {
+  messages: Message[];
+  match: Match;
 }
 
-export const useMessages = create<IMessages & IMessagesActions>((set) => ({
+export interface IChatActions {
+  addMessage: (message: Message) => void;
+  setDemoMatch: (match: Match) => void;
+}
+
+export const useChat = create<IChat & IChatActions>((set) => ({
   messages: messages,
+  match: {
+    id: 1,
+    name: "Alisha",
+    matched: new Date("2023-12-13T12:20:36.461Z"),
+    image:
+      "https://res.cloudinary.com/duqbyobol/image/upload/v1702589450/amir-riazipour-XcZ78DlXtes-unsplash_kcke73.jpg",
+  },
   addMessage: (message) =>
     set((state) => ({
+      match: state.match,
       messages: [...state.messages, message],
+    })),
+
+  setDemoMatch: (match) =>
+    set((state) => ({
+      match: match,
+      messages: state.messages,
+    })),
+}));
+
+const chats = [
+  {
+    id: 1,
+    match: {
+      id: 1,
+      name: "Alisha",
+      matched: new Date("2023-12-13T12:20:36.461Z"),
+      image:
+        "https://res.cloudinary.com/duqbyobol/image/upload/v1702589450/amir-riazipour-XcZ78DlXtes-unsplash_kcke73.jpg",
+    },
+  },
+];
+
+export interface IChats {
+  chats: {
+    id: number;
+    match: Match;
+  }[];
+}
+
+export interface IChatsActions {
+  setDemoChatMatch: (match: Match, chatId: number) => void;
+}
+
+export const useChats = create<IChats & IChatsActions>((set) => ({
+  chats: chats,
+  setDemoChatMatch: (match, chatId) => {
+    set((state) => ({
+      chats: state.chats.map((chat) => {
+        if (chat.id === chatId) {
+          return {
+            id: chat.id,
+            match: match,
+          };
+        } else {
+          return chat;
+        }
+      }),
+    }));
+  },
+}));
+
+export const user1 = {
+  id: 1,
+  name: "Alisha",
+  image:
+    "https://res.cloudinary.com/duqbyobol/image/upload/v1702589450/amir-riazipour-XcZ78DlXtes-unsplash_kcke73.jpg",
+};
+
+export const user2 = {
+  id: 2,
+  name: "User",
+  image:
+    "https://res.cloudinary.com/duqbyobol/image/upload/v1702589457/muhammad-ruqi-yaddin-hxLv1jqP0_o-unsplash_r7vqb6.jpg",
+};
+
+export interface IUser {
+  user: User;
+}
+
+export interface IUserActions {
+  setUser: (user: User) => void;
+}
+
+export const useUser = create<IUser & IUserActions>((set) => ({
+  user: user2,
+  setUser: (user) =>
+    set(() => ({
+      user: user,
     })),
 }));

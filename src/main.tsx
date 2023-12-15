@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { App, Chat } from "./App";
+import { Chats } from "./routes/Chats";
+import { Chat } from "./routes/chat/[id]/Chat";
 import "./index.css";
 
 import {
@@ -14,15 +15,24 @@ const rootRouter = new RootRoute();
 const indexRoute = new Route({
   getParentRoute: () => rootRouter,
   path: "/",
-  component: App,
+  component: Chats,
 });
+
 const chatRoute = new Route({
   getParentRoute: () => rootRouter,
   path: "/chat",
+});
+
+const chatIdRoute = new Route({
+  getParentRoute: () => chatRoute,
+  path: "$chatId",
   component: Chat,
 });
 
-const routeTree = rootRouter.addChildren([indexRoute, chatRoute]);
+const routeTree = rootRouter.addChildren([
+  indexRoute,
+  chatRoute.addChildren([chatIdRoute]),
+]);
 
 const router = new Router({ routeTree });
 
