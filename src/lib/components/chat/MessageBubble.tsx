@@ -1,5 +1,10 @@
 import type { Message } from "../../types";
 
+function isEmoji(input: string): boolean {
+  const removeEmojis = input.replaceAll(/\p{Emoji}/gu, "");
+  return removeEmojis.length === 0;
+}
+
 export default function MessageBubble(props: {
   message: Message;
   isLatest: boolean;
@@ -22,11 +27,17 @@ export default function MessageBubble(props: {
     <li
       className={`flex w-full items-center ${messageIdentifyPostion} ${spacingFromBottom} ${groupWithPrevious}`}
     >
-      <div
-        className={`leading-1.5 flex w-full max-w-[320px] flex-col gap-2.5   p-3 ${messageIdentifyStyle}`}
-      >
-        <p>{message}</p>
-      </div>
+      {isEmoji(message) ? (
+        <div className="max-w-[320px]">
+          <p className="text-4xl">{message}</p>
+        </div>
+      ) : (
+        <div
+          className={`leading-1.5 flex w-fit max-w-[320px] flex-col gap-2.5   p-3 ${messageIdentifyStyle}`}
+        >
+          <p>{message}</p>
+        </div>
+      )}
     </li>
   );
 }

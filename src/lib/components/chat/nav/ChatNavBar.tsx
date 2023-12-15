@@ -1,6 +1,7 @@
 import { type Match, ScreenView } from "../../../types";
 import { Link } from "@tanstack/react-router";
 import { ChevronLeft, MoreHorizontal } from "lucide-react";
+import Avatar from "../../atoms/Avatar";
 
 type MessageViewNavProps = {
   match: Match;
@@ -53,12 +54,7 @@ export default function MessageViewNav(
         </li>
         <li>
           <div className="flex items-center justify-center gap-2 font-semibold text-slate-700">
-            <div className="h-10 w-10 rounded-full border-[1.2px]">
-              <img
-                className="h-10 w-10 rounded-full bg-slate-300 object-cover"
-                src={props.match.image}
-              />
-            </div>
+            <Avatar src={match.image} width={10} />
             <p>{match.name}</p>
           </div>
         </li>
