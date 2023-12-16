@@ -101,6 +101,37 @@ export interface IChat {
 export interface IChatActions {
   addMessage: (message: Message) => void;
   setDemoMatch: (match: Match) => void;
+  setSeenNewMessages: (userId: number) => void;
+}
+
+function setNotSennToSeen(messages: Message[], userId: number): Message[] {
+  const walkToLastUnseenMsg = () => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].user.id !== userId && messages[i].seenAt) {
+        return i;
+      }
+    }
+    return -1;
+  };
+
+  const lastUnseenMsgIndex = walkToLastUnseenMsg();
+  if (lastUnseenMsgIndex === -1 || lastUnseenMsgIndex === messages.length - 1) {
+    return messages;
+  }
+
+  const unseenOnes = messages.slice(lastUnseenMsgIndex, messages.length);
+  return messages.slice(0, lastUnseenMsgIndex).concat(
+    unseenOnes.map((msg) => {
+      if (msg.user.id !== userId) {
+        return {
+          ...msg,
+          seenAt: new Date(),
+        };
+      } else {
+        return msg;
+      }
+    }),
+  );
 }
 
 export const useChat = create<IChat & IChatActions>((set) => ({
@@ -122,6 +153,12 @@ export const useChat = create<IChat & IChatActions>((set) => ({
     set((state) => ({
       match: match,
       messages: state.messages,
+    })),
+
+  setSeenNewMessages: (userId) =>
+    set((state) => ({
+      match: state.match,
+      messages: setNotSennToSeen(state.messages, userId),
     })),
 }));
 
@@ -200,7 +237,7 @@ export const user1 = {
 
 export const user2 = {
   id: 2,
-  name: "User",
+  name: "Afifa",
   image:
     "https://res.cloudinary.com/duqbyobol/image/upload/v1702589457/muhammad-ruqi-yaddin-hxLv1jqP0_o-unsplash_r7vqb6.jpg",
 };

@@ -7,7 +7,7 @@ import SendMessage from "../../../lib/components/chat/SendMessage";
 
 export function Chat(): JSX.Element {
   const [screenView, setScreenView] = useState<ScreenView>(ScreenView.Chat);
-  const { match, setDemoMatch } = useChat();
+  const { match, setDemoMatch, setSeenNewMessages } = useChat();
   const { user } = useUser();
 
   useEffect(() => {
@@ -20,6 +20,7 @@ export function Chat(): JSX.Element {
         image: matchToSwitch.image,
         matched: match.matched,
       });
+      setSeenNewMessages(user.id);
     }
   }, [user]);
   return (
