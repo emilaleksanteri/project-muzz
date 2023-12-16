@@ -8,6 +8,7 @@ export default function SendMessage(): JSX.Element {
   const { addMessage, match } = useChat();
   const { setMostRecentMessage } = useChats();
   const { user } = useUser();
+
   const { chatId } = useParams({ strict: false });
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 

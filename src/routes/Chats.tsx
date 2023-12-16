@@ -1,9 +1,22 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useChats, useUser, user1, user2 } from "../lib/store";
 import Avatar from "../lib/components/atoms/Avatar";
+import { RefreshCw } from "lucide-react";
+
+const formatDate = (date: Date): string => {
+  const today = new Date();
+  if (date.getDate() === today.getDate()) {
+    return date.toLocaleTimeString("EN-us", { timeStyle: "short" });
+  } else if (date.getDate() === today.getDate() - 1) {
+    return "Yesterday";
+  } else {
+    return date.toLocaleDateString();
+  }
+};
 
 export function Chats(): JSX.Element {
+  const [spinMe, setSpinMe] = useState<boolean>(false);
   const { chats, setDemoChatMatch } = useChats();
   const { user, setUser } = useUser();
 
@@ -29,23 +42,32 @@ export function Chats(): JSX.Element {
     }
   }, [user]);
 
-  const formatDate = (date: Date): string => {
-    const today = new Date();
-    if (date.getDate() === today.getDate()) {
-      return date.toLocaleTimeString("EN-us", { timeStyle: "short" });
-    } else if (date.getDate() === today.getDate() - 1) {
-      return "Yesterday";
-    } else {
-      return date.toLocaleDateString();
-    }
+  const switchUser = () => {
+    setSpinMe(true);
+    setTimeout(() => {
+      setSpinMe(false);
+    }, 600);
+
+    setUser(userToSwitch.user);
   };
 
   return (
     <main className="h-screen">
       <div className="flex items-center justify-between">
-        <p>Current user: {user.name}</p>
-        <button onClick={() => setUser(userToSwitch.user)}>
-          switch to {userToSwitch.name}
+        <div className="flex items-center gap-2 px-4 py-2 text-lg font-bold">
+          <Avatar
+            src={user.image}
+            alt={user.name}
+            imageClass="w-10 h-10"
+            contnainerClass="w-10 h-10 border-none"
+          />
+          <p>{user.name}</p>
+        </div>
+        <button
+          onClick={switchUser}
+          className={`px-4 py-2 ${spinMe ? "animate-spin-once" : ""}`}
+        >
+          <RefreshCw size={28} className="stroke-slate-800" />
         </button>
       </div>
       <section className="flex flex-col gap-2 px-4">
