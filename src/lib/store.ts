@@ -5,54 +5,63 @@ const messages = [
   {
     message: "Hey! Did you also go to Oxford?",
     sentAt: new Date("2023-12-13T15:20:36.461Z"),
+    seenAt: new Date("2023-12-13T15:20:36.461Z"),
     user: { id: 1 },
     id: 1,
   },
   {
     message: "Yes! Are you going to the food festival on Sunday?",
     sentAt: new Date("2023-12-13T15:23:36.461Z"),
+    seenAt: new Date("2023-12-13T15:23:36.461Z"),
     user: { id: 2 },
     id: 2,
   },
   {
     message: "I am! See you there for a coffee?",
     sentAt: new Date("2023-12-13T15:25:36.461Z"),
+    seenAt: new Date("2023-12-13T15:25:36.461Z"),
     user: { id: 1 },
     id: 3,
   },
   {
     message: "Hey! Did you also go to Oxford?",
     sentAt: new Date("2023-12-13T15:25:40.461Z"),
+    seenAt: new Date("2023-12-13T15:25:40.461Z"),
     user: { id: 1 },
     id: 4,
   },
   {
     message: "Yes! Are you going to the food festival on Sunday?",
     sentAt: new Date("2023-12-13T15:26:45.461Z"),
+    seenAt: new Date("2023-12-13T15:26:45.461Z"),
     user: { id: 2 },
     id: 5,
   },
   {
     message: "I am! See you there for a coffee?",
     sentAt: new Date("2023-12-13T15:28:00.461Z"),
+    seenAt: new Date("2023-12-13T15:28:00.461Z"),
     user: { id: 1 },
     id: 6,
   },
   {
     message: "Hey! Did you also go to Oxford?",
     sentAt: new Date("2023-12-13T15:28:10.461Z"),
+    seenAt: new Date("2023-12-13T15:28:10.461Z"),
     user: { id: 1 },
     id: 7,
   },
   {
     message: "Yes! Are you going to the food festival on Sunday?",
     sentAt: new Date("2023-12-13T15:29:20.461Z"),
+    seenAt: new Date("2023-12-13T15:29:20.461Z"),
     user: { id: 2 },
     id: 8,
   },
   {
     message: "I am! See you there for a coffee?",
     sentAt: new Date("2023-12-13T16:30:20.461Z"),
+    seenAt: new Date("2023-12-13T16:30:20.461Z"),
     user: { id: 1 },
     id: 9,
   },
@@ -60,18 +69,21 @@ const messages = [
   {
     message: "Hey! Did you also go to Oxford?",
     sentAt: new Date("2023-12-13T16:32:20.461Z"),
+    seendAt: new Date("2023-12-13T16:32:20.461Z"),
     user: { id: 1 },
     id: 10,
   },
   {
     message: "Yes! Are you going to the food festival on Sunday?",
     sentAt: new Date("2023-12-13T16:32:45.461Z"),
+    seenAt: new Date("2023-12-13T16:32:45.461Z"),
     user: { id: 2 },
     id: 11,
   },
   {
     message: "I am! See you there for a coffee?",
     sentAt: new Date("2023-12-13T18:32:45.461Z"),
+    seenAt: new Date("2023-12-13T18:32:45.461Z"),
     user: { id: 1 },
     id: 12,
   },
@@ -123,6 +135,12 @@ const chats = [
       image:
         "https://res.cloudinary.com/duqbyobol/image/upload/v1702589450/amir-riazipour-XcZ78DlXtes-unsplash_kcke73.jpg",
     },
+    mostRecentMessage: {
+      message: "I am! See you there for a coffee?",
+      sentAt: new Date("2023-12-13T18:32:45.461Z"),
+      user: { id: 1 },
+      id: 12,
+    },
   },
 ];
 
@@ -130,11 +148,13 @@ export interface IChats {
   chats: {
     id: number;
     match: Match;
+    mostRecentMessage?: Message;
   }[];
 }
 
 export interface IChatsActions {
   setDemoChatMatch: (match: Match, chatId: number) => void;
+  setMostRecentMessage: (message: Message, chatId: number) => void;
 }
 
 export const useChats = create<IChats & IChatsActions>((set) => ({
@@ -146,6 +166,22 @@ export const useChats = create<IChats & IChatsActions>((set) => ({
           return {
             id: chat.id,
             match: match,
+            mostRecentMessage: chat.mostRecentMessage,
+          };
+        } else {
+          return chat;
+        }
+      }),
+    }));
+  },
+  setMostRecentMessage: (message, chatId) => {
+    set((state) => ({
+      chats: state.chats.map((chat) => {
+        if (chat.id === chatId) {
+          return {
+            id: chat.id,
+            match: chat.match,
+            mostRecentMessage: message,
           };
         } else {
           return chat;

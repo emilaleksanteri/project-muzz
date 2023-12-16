@@ -11,6 +11,12 @@ import {
   RouterProvider,
 } from "@tanstack/react-router";
 
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}
+
 const rootRouter = new RootRoute();
 const indexRoute = new Route({
   getParentRoute: () => rootRouter,
@@ -35,12 +41,6 @@ const routeTree = rootRouter.addChildren([
 ]);
 
 const router = new Router({ routeTree });
-
-declare module "@tanstack/react-router" {
-  interface Register {
-    router: typeof router;
-  }
-}
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

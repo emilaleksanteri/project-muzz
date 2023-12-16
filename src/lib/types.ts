@@ -3,6 +3,7 @@ export type Message = {
   id: number;
   user: { id: number };
   sentAt: Date;
+  seenAt?: Date;
 };
 
 export type User = {

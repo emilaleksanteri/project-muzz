@@ -54,7 +54,7 @@ export default function MessageViewNav(
         </li>
         <li>
           <div className="flex items-center justify-center gap-2 font-semibold text-slate-700">
-            <Avatar src={match.image} width={10} />
+            <Avatar src={match.image} alt={match.name} />
             <p>{match.name}</p>
           </div>
         </li>

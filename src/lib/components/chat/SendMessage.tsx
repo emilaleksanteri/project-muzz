@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import { useChat, useUser } from "../../store";
+import { useChat, useUser, useChats } from "../../store";
 import { SendHorizontal } from "lucide-react";
+import { useParams } from "@tanstack/react-router";
 
 export default function SendMessage(): JSX.Element {
   const [message, setMessage] = useState<string>("");
   const { addMessage, match } = useChat();
+  const { setMostRecentMessage } = useChats();
   const { user } = useUser();
+  const { chatId } = useParams({ strict: false });
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const resizeTextArea = () => {
@@ -21,12 +24,14 @@ export default function SendMessage(): JSX.Element {
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    addMessage({
+    const newMsg = {
       id: Math.floor(Math.random() * 100_000_000),
       message: message,
       sentAt: new Date(),
       user: user,
-    });
+    };
+    addMessage(newMsg);
+    setMostRecentMessage(newMsg, Number(chatId));
     setMessage("");
   };
 

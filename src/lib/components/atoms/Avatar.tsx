@@ -1,14 +1,17 @@
 export default function Avatar(props: {
   src: string;
-  width: number;
+  alt: string;
+  contnainerClass?: string;
+  imageClass?: string;
 }): JSX.Element {
+  const container = props.contnainerClass ?? "w-10 h-10";
+  const image = props.imageClass ?? "w-10 h-10";
   return (
-    <div
-      className={`h-${props.width} w-${props.width} rounded-full border-[1.2px]`}
-    >
+    <div className={`${container} rounded-full border-[1.2px]`}>
       <img
-        className={`h-${props.width} w-${props.width} rounded-full bg-slate-300 object-cover`}
+        className={`${image} rounded-full bg-slate-300 object-cover`}
         src={props.src}
+        alt={props.alt}
       />
     </div>
   );
