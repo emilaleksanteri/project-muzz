@@ -26,6 +26,14 @@ function SeenCheck(props: SeenCheckProps): JSX.Element | undefined {
   }
 }
 
+function ImageInMessage(props: { img: string }): JSX.Element {
+  return (
+    <div>
+      <img src={props.img} className="h-full w-full rounded-lg" />
+    </div>
+  );
+}
+
 type MessageBubbleProps = {
   message: Message;
   isLatest: boolean;
@@ -50,6 +58,7 @@ export default function MessageBubble(props: MessageBubbleProps): JSX.Element {
     >
       {isEmoji(message.message) ? (
         <div className="max-w-[320px] ">
+          {message.img && <ImageInMessage img={message.img} />}
           <p className="flex flex-col gap-2.5 text-4xl">
             {message.message}
             <SeenCheck
@@ -63,6 +72,7 @@ export default function MessageBubble(props: MessageBubbleProps): JSX.Element {
         <div
           className={`leading-1.5 flex w-fit max-w-[320px] flex-col gap-2.5 p-3 ${messageIdentifyStyle}`}
         >
+          {message.img && <ImageInMessage img={message.img} />}
           <p>{message.message}</p>
           <SeenCheck
             isMyMessage={isMyMessage}

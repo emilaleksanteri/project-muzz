@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
-import { useChat, useUser, user1, user2 } from "../../../lib/store";
+import { useChat, useUser, user1, user2, useChats } from "../../../lib/store";
 import { ScreenView } from "../../../lib/types";
 import ChatNavBar from "../../../lib/components/chat/nav/ChatNavBar";
 import MessagesList from "../../../lib/components/chat/MessageList";
 import SendMessage from "../../../lib/components/chat/SendMessage";
+import { useParams } from "@tanstack/react-router";
 
 export function Chat(): JSX.Element {
   const [screenView, setScreenView] = useState<ScreenView>(ScreenView.Chat);
-  const { match, setDemoMatch, setSeenNewMessages } = useChat();
+  const { match, setDemoMatch, setSeenNewMessages, messages } = useChat();
   const { user } = useUser();
-
+  const { setMostRecentMessage } = useChats();
+  const { chatId } = useParams({ strict: false });
   useEffect(() => {
     if (match.id === user.id) {
       const matchToSwitch = user.id === 1 ? user2 : user1;
@@ -22,7 +24,10 @@ export function Chat(): JSX.Element {
       });
       setSeenNewMessages(user.id);
     }
-  }, [user]);
+    if (messages.length) {
+      setMostRecentMessage(messages[messages.length - 1], Number(chatId));
+    }
+  }, [user, messages, match]);
   return (
     <main className="flex h-screen flex-col items-center justify-center bg-neutral-50">
       <ChatNavBar

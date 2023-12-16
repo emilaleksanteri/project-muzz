@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useChats, useUser, user1, user2 } from "../lib/store";
 import Avatar from "../lib/components/atoms/Avatar";
 import { RefreshCw } from "lucide-react";
+import type { IChats } from "../lib/store";
 
 const formatDate = (date: Date): string => {
   const today = new Date();
@@ -14,6 +15,56 @@ const formatDate = (date: Date): string => {
     return date.toLocaleDateString();
   }
 };
+
+function ChatRow(props: {
+  chat: IChats["chats"][0];
+  userId: number;
+}): JSX.Element {
+  const { chat, userId } = props;
+
+  return (
+    <li>
+      <Link
+        to="/chat/$chatId"
+        params={{ chatId: String(chat.id) }}
+        className="flex items-center justify-between py-2"
+      >
+        <div className="flex items-center gap-3">
+          <Avatar
+            src={chat.match.image}
+            alt={chat.match.name}
+            imageClass="w-12 h-12"
+            contnainerClass="w-12 h-12 border-none"
+          />
+          <div className="flex flex-col items-start justify-center">
+            <p className="text-lg font-semibold text-slate-700">
+              {chat.match.name}
+            </p>
+            <p
+              className={`
+              ${
+                chat.mostRecentMessage?.user.id !== userId &&
+                chat.mostRecentMessage?.seenAt === undefined
+                  ? "font-semibold"
+                  : "font-thin"
+              } 
+                text-sm`}
+            >
+              {chat.mostRecentMessage
+                ? chat.mostRecentMessage.message
+                : "New match 🎈"}
+            </p>
+          </div>
+        </div>
+        <p className="text-sm font-thin">
+          {chat.mostRecentMessage
+            ? formatDate(chat.mostRecentMessage?.sentAt)
+            : ""}
+        </p>
+      </Link>
+    </li>
+  );
+}
 
 export function Chats(): JSX.Element {
   const [spinMe, setSpinMe] = useState<boolean>(false);
@@ -74,37 +125,7 @@ export function Chats(): JSX.Element {
         <h2 className="py-4 text-xl font-semibold text-slate-800">Messages</h2>
         <ul>
           {chats.map((chat) => (
-            <li key={chat.match.name}>
-              <Link
-                to="/chat/$chatId"
-                params={{ chatId: String(chat.id) }}
-                className="flex items-center justify-between py-2"
-              >
-                <div className="flex items-center gap-3">
-                  <Avatar
-                    src={chat.match.image}
-                    alt={chat.match.name}
-                    imageClass="w-12 h-12"
-                    contnainerClass="w-12 h-12 border-none"
-                  />
-                  <div className="flex flex-col items-start justify-center">
-                    <p className="text-lg font-semibold text-slate-700">
-                      {chat.match.name}
-                    </p>
-                    <p className="text-sm font-thin">
-                      {chat.mostRecentMessage
-                        ? chat.mostRecentMessage.message
-                        : "New match 🎈"}
-                    </p>
-                  </div>
-                </div>
-                <p className="text-sm font-thin">
-                  {chat.mostRecentMessage
-                    ? formatDate(chat.mostRecentMessage?.sentAt)
-                    : ""}
-                </p>
-              </Link>
-            </li>
+            <ChatRow key={chat.id} chat={chat} userId={user.id} />
           ))}
         </ul>
       </section>

@@ -4,6 +4,7 @@ export type Message = {
   user: { id: number };
   sentAt: Date;
   seenAt?: Date;
+  img?: string;
 };
 
 export type User = {

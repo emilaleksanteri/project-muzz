@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { Match, Message, User } from "./types";
 
-const messages = [
+const messages: Message[] = [
   {
     message: "Hey! Did you also go to Oxford?",
     sentAt: new Date("2023-12-13T15:20:36.461Z"),
@@ -69,7 +69,7 @@ const messages = [
   {
     message: "Hey! Did you also go to Oxford?",
     sentAt: new Date("2023-12-13T16:32:20.461Z"),
-    seendAt: new Date("2023-12-13T16:32:20.461Z"),
+    seenAt: new Date("2023-12-13T16:32:20.461Z"),
     user: { id: 1 },
     id: 10,
   },
