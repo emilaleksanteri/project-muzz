@@ -1,6 +1,58 @@
 import { create } from "zustand";
 import type { Match, Message, User } from "./types";
 
+export const user1: User = {
+  id: 1,
+  name: "Alisha",
+  image:
+    "https://res.cloudinary.com/duqbyobol/image/upload/v1702589450/amir-riazipour-XcZ78DlXtes-unsplash_kcke73.jpg",
+  info: {
+    bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eu consequat ac felis donec et. Laoreet id donec ultrices tincidunt arcu non.",
+    interests: ["Hiking", "Cooking", "Reading"],
+    basicInfo: [
+      { key: "height", value: "183cm (6'0)" },
+      { key: "hasBeenMarried", value: "Never married" },
+      { key: "children", value: "No children" },
+      { key: "marriagePlans", value: "Marriage within 1 - 2 years" },
+      { key: "locationPlan", value: "Willing to relocate" },
+    ],
+    religiosity: [
+      { key: "religion", value: "sunni" },
+      { key: "activity", value: "practicing" },
+      { key: "prays", value: "prays regularly" },
+      { key: "food", value: "halal" },
+      { key: "smokes", value: "non-smoker" },
+      { key: "drinks", value: "non-drinker" },
+    ],
+  },
+};
+
+export const user2: User = {
+  id: 2,
+  name: "Afifa",
+  image:
+    "https://res.cloudinary.com/duqbyobol/image/upload/v1702589457/muhammad-ruqi-yaddin-hxLv1jqP0_o-unsplash_r7vqb6.jpg",
+  info: {
+    bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eu consequat ac felis donec et. Laoreet id donec ultrices tincidunt arcu non.",
+    interests: ["Hiking", "Cooking", "Reading"],
+    basicInfo: [
+      { key: "height", value: "173cm (5'6)" },
+      { key: "hasBeenMarried", value: "Never married" },
+      { key: "children", value: "No children" },
+      { key: "marriagePlans", value: "Marriage within 1 - 2 years" },
+      { key: "locationPlan", value: "Willing to relocate" },
+    ],
+    religiosity: [
+      { key: "religion", value: "sunni" },
+      { key: "activity", value: "practicing" },
+      { key: "prays", value: "prays regularly" },
+      { key: "food", value: "halal" },
+      { key: "smokes", value: "non-smoker" },
+      { key: "drinks", value: "non-drinker" },
+    ],
+  },
+};
+
 const messages: Message[] = [
   {
     message: "Hey! Did you also go to Oxford?",
@@ -137,11 +189,8 @@ function setNotSennToSeen(messages: Message[], userId: number): Message[] {
 export const useChat = create<IChat & IChatActions>((set) => ({
   messages: messages,
   match: {
-    id: 1,
-    name: "Alisha",
+    ...user1,
     matched: new Date("2023-12-13T12:20:36.461Z"),
-    image:
-      "https://res.cloudinary.com/duqbyobol/image/upload/v1702589450/amir-riazipour-XcZ78DlXtes-unsplash_kcke73.jpg",
   },
   addMessage: (message) =>
     set((state) => ({
@@ -166,11 +215,8 @@ const chats = [
   {
     id: 1,
     match: {
-      id: 1,
-      name: "Alisha",
+      ...user1,
       matched: new Date("2023-12-13T12:20:36.461Z"),
-      image:
-        "https://res.cloudinary.com/duqbyobol/image/upload/v1702589450/amir-riazipour-XcZ78DlXtes-unsplash_kcke73.jpg",
     },
     mostRecentMessage: {
       message: "I am! See you there for a coffee?",
@@ -227,20 +273,6 @@ export const useChats = create<IChats & IChatsActions>((set) => ({
     }));
   },
 }));
-
-export const user1 = {
-  id: 1,
-  name: "Alisha",
-  image:
-    "https://res.cloudinary.com/duqbyobol/image/upload/v1702589450/amir-riazipour-XcZ78DlXtes-unsplash_kcke73.jpg",
-};
-
-export const user2 = {
-  id: 2,
-  name: "Afifa",
-  image:
-    "https://res.cloudinary.com/duqbyobol/image/upload/v1702589457/muhammad-ruqi-yaddin-hxLv1jqP0_o-unsplash_r7vqb6.jpg",
-};
 
 export interface IUser {
   user: User;

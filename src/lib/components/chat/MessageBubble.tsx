@@ -43,7 +43,9 @@ type MessageBubbleProps = {
 
 export default function MessageBubble(props: MessageBubbleProps): JSX.Element {
   const { message, isLatest, groupWithPrevioues, isMyMessage } = props;
-  const spacingFromBottom = isLatest ? "mb-[17%]" : "mb-0";
+  const spacingFromBottom = isLatest
+    ? "mb-[17%] 2xl:mb-[5%] md:mb-[10%] sm:mb-[12%]"
+    : "mb-0";
   const groupWithPrevious = groupWithPrevioues ? "-mt-3" : "mt-0";
 
   const messageIdentifyStyle = isMyMessage
@@ -57,7 +59,7 @@ export default function MessageBubble(props: MessageBubbleProps): JSX.Element {
       className={`relative flex w-full items-center ${messageIdentifyPostion} ${spacingFromBottom} ${groupWithPrevious}`}
     >
       {isEmoji(message.message) ? (
-        <div className="max-w-[320px] ">
+        <div className="max-w-[320px] lg:max-w-[450px] 2xl:max-w-[600px]">
           {message.img && <ImageInMessage img={message.img} />}
           <p className="flex flex-col gap-2.5 text-4xl">
             {message.message}
@@ -70,10 +72,10 @@ export default function MessageBubble(props: MessageBubbleProps): JSX.Element {
         </div>
       ) : (
         <div
-          className={`leading-1.5 flex w-fit max-w-[320px] flex-col gap-2.5 p-3 ${messageIdentifyStyle}`}
+          className={`leading-1.5 flex w-fit max-w-[320px] flex-col gap-2.5 p-3 lg:max-w-[450px] 2xl:max-w-[600px] ${messageIdentifyStyle}`}
         >
           {message.img && <ImageInMessage img={message.img} />}
-          <p>{message.message}</p>
+          <p className="break-words">{message.message}</p>
           <SeenCheck
             isMyMessage={isMyMessage}
             seenAt={message.seenAt}

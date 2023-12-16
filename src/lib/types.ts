@@ -7,18 +7,34 @@ export type Message = {
   img?: string;
 };
 
+export type InfoKey =
+  | "height"
+  | "hasBeenMarried"
+  | "children"
+  | "marriagePlans"
+  | "locationPlan"
+  | "religion"
+  | "activity"
+  | "prays"
+  | "food"
+  | "smokes"
+  | "drinks";
 export type User = {
   id: number;
   name: string;
   image: string;
+  info: {
+    bio: string;
+    interests: string[];
+    basicInfo: { key: InfoKey; value: string }[];
+    religiosity: { key: InfoKey; value: string }[];
+  };
 };
 
 export type Match = {
   id: number;
-  name: string;
   matched: Date;
-  image: string;
-};
+} & User;
 
 export enum ScreenView {
   Chat,

@@ -22,6 +22,14 @@ function ChatRow(props: {
 }): JSX.Element {
   const { chat, userId } = props;
 
+  const slicedRecent = (recent: string) => {
+    if (recent.length > 30) {
+      return recent.slice(0, 30) + "...";
+    }
+
+    return recent;
+  };
+
   return (
     <li>
       <Link
@@ -51,7 +59,7 @@ function ChatRow(props: {
                 text-sm`}
             >
               {chat.mostRecentMessage
-                ? chat.mostRecentMessage.message
+                ? slicedRecent(chat.mostRecentMessage.message)
                 : "New match 🎈"}
             </p>
           </div>
