@@ -52,7 +52,7 @@ function InfoItemLabel(props: InfoItemLabelProps): JSX.Element {
   return (
     <li className="flex w-fit items-center gap-2 rounded-full bg-zinc-200 px-4 py-2 font-semibold ">
       {keyToIconMap[props.identifier]}
-      <span className="text-slate-800">{props.value}</span>
+      <span className="capitalize text-slate-800">{props.value}</span>
     </li>
   );
 }

@@ -58,9 +58,15 @@ function ChatRow(props: {
               } 
                 text-sm`}
             >
-              {chat.mostRecentMessage
+              {chat.mostRecentMessage && chat.mostRecentMessage.message !== " "
                 ? slicedRecent(chat.mostRecentMessage.message)
-                : "New match 🎈"}
+                : chat.mostRecentMessage?.img
+                  ? `${
+                      chat.mostRecentMessage.user.id === userId
+                        ? "You"
+                        : chat.mostRecentMessage.user.name
+                    } sent a photo 📷`
+                  : "New match 🎈"}
             </p>
           </div>
         </div>

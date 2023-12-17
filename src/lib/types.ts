@@ -1,10 +1,11 @@
 export type Message = {
   message: string;
   id: number;
-  user: { id: number };
+  user: { id: number; name: string };
   sentAt: Date;
   seenAt?: Date;
   img?: string;
+  replyTo?: Message;
 };
 
 export type InfoKey =
@@ -25,7 +26,6 @@ export type User = {
   image: string;
   info: {
     bio: string;
-    interests: string[];
     basicInfo: { key: InfoKey; value: string }[];
     religiosity: { key: InfoKey; value: string }[];
   };
