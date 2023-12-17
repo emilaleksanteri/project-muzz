@@ -1,30 +1,11 @@
-# React + TypeScript + Vite
+# What I would like to add to make the chat more complete
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- Obvious first feature would be real time chat, this could be nicely done with Go with the help of something like [Gorilla Websockets](https://github.com/gorilla/websocket)
 
-Currently, two official plugins are available:
+- Second feature would be to add native like gesture controls for replying and adding actions to message bubbles, these can be done in vanilla React with useRef and event tricks
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Send audio message, since the Muzz mobile app has this feature it could be added on the web version too, since the browser has a [meadia stream api](https://developer.mozilla.org/en-US/docs/Web/API/MediaStream_Recording_API/Using_the_MediaStream_Recording_API)
 
-## Expanding the ESLint configuration
+- Extending the image send feature to support video file types and html `<video>` tag could display the video within the chat interface
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module",
-    project: ["./tsconfig.json", "./tsconfig.node.json"],
-    tsconfigRootDir: __dirname,
-  },
-};
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- Finally live calls could be possible to implement on the Web app too via a protocol like [WebRTC](https://webrtc.org/) so users could do live video calls from the browser

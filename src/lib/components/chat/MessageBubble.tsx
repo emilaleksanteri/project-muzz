@@ -1,6 +1,5 @@
 import type { Message } from "../../types";
 import { CheckCheck } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
 
 function isEmoji(input: string): boolean {
   const removeEmojis = input.replace(/\p{Emoji}/gu, "");
@@ -44,6 +43,7 @@ type MessageBubbleProps = {
 
 export default function MessageBubble(props: MessageBubbleProps): JSX.Element {
   const { message, isLatest, groupWithPrevioues, isMyMessage } = props;
+
   const spacingFromBottom = isLatest
     ? "mb-[17%] 2xl:mb-[5%] md:mb-[10%] sm:mb-[12%]"
     : "mb-0";
@@ -57,7 +57,7 @@ export default function MessageBubble(props: MessageBubbleProps): JSX.Element {
 
   return (
     <li
-      className={`relative flex w-full items-center    ${messageIdentifyPostion} ${spacingFromBottom} ${groupWithPrevious}`}
+      className={`relative flex w-full items-center ${messageIdentifyPostion} ${spacingFromBottom} ${groupWithPrevious}`}
     >
       {isEmoji(message.message) ? (
         <div className="max-w-[320px] lg:max-w-[450px] 2xl:max-w-[600px]">

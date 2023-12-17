@@ -22,6 +22,7 @@ function isUserMessageBurst(message1: MessageT, message2: MessageT): boolean {
 
 export default function MessagesList(): JSX.Element {
   const { messages, match } = useChat();
+
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

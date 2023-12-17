@@ -5,7 +5,6 @@ export type Message = {
   sentAt: Date;
   seenAt?: Date;
   img?: string;
-  replyTo?: Message;
 };
 
 export type InfoKey =
